@@ -62,6 +62,12 @@ export class LambdaWithLayer extends Stack {
           'logs:PutLogEvents',
         ],
         resources: ['*'],
+      }),
+      new iam.PolicyStatement({
+        actions: [
+          'sts:AssumeRole',
+        ],
+        resources: [s3PreSignRole.roleArn],
       })],
     });
 

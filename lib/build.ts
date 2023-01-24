@@ -88,7 +88,7 @@ export class LambdaWithLayer extends Stack {
 
     //IAM PreSign Assume Role
     const s3PreSignRole = new iam.Role(this, 's3PreSignRole', {
-      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+      assumedBy: new iam.Principal(LambdaExecRole.roleArn),
       description: 'Lambda Execution Role',
       inlinePolicies: { s3rwRolePolicies }
     });
@@ -132,6 +132,7 @@ export class LambdaWithLayer extends Stack {
         APPNAME: process.env.ApplicationName!,
         ENVNAME: process.env.Environment!,
         APIURL: `https://${apigw.restApiId}.execute-api.${this.region}.amazonaws.com/prod`,
+        BUCKET: s3Bucket.arn
       },
       }); 
      
@@ -147,7 +148,7 @@ export class LambdaWithLayer extends Stack {
         APPNAME: process.env.ApplicationName!,
         ENVNAME: process.env.Environment!,
         APIURL: `https://${apigw.restApiId}.execute-api.${this.region}.amazonaws.com/`,
-        S3ROLE: s3PreSignRole.roleArn
+        S3ROLE: s3PreSignRole.bucketName
       },
       }); 
 

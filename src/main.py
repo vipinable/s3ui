@@ -2,6 +2,7 @@ import logging
 import boto3
 import base64
 import json
+import os
 from botocore.exceptions import ClientError
 from botocore.config import Config
 
@@ -35,7 +36,9 @@ def handler(event, context):
             }
             
     prefix = 'test1'
-    bucket = 's3ui-dev-s3uplodbucket0b968d82-psl80n7td15p'
+    bucket = os.environ.get("BUCKET")
+    s3role = os.environ.get("S3ROLE")
+    apiurl = os.environ.get("APIURL")
     
     logger.info("QueryString Parameters %s" % (event['queryStringParameters']))
     
@@ -146,7 +149,7 @@ def create_presigned_post(bucket_name, object_name, expiration,
     """
     # Generate a presigned S3 POST URL
     client = boto3.client('sts')
-    assumed_role_object  = client.assume_role(DurationSeconds=900,RoleArn='arn:aws:iam::731685434595:role/S3presignRole',RoleSessionName='PreSign',)
+    assumed_role_object  = client.assume_role(DurationSeconds=900,RoleArn=s3role,RoleSessionName='PreSign',)
     temp_credentials = assumed_role_object['Credentials']
     PreSign = boto3.session.Session(aws_access_key_id=temp_credentials['AccessKeyId'],
                                     aws_secret_access_key=temp_credentials['SecretAccessKey'],
@@ -167,7 +170,7 @@ def create_presigned_post(bucket_name, object_name, expiration,
     
 def create_downloadurl(bucket ,key, expiration):
     client = boto3.client('sts')
-    assumed_role_object  = client.assume_role(DurationSeconds=900,RoleArn='arn:aws:iam::731685434595:role/S3presignRole',RoleSessionName='PreSign',)
+    assumed_role_object  = client.assume_role(DurationSeconds=900,RoleArn=s3role,RoleSessionName='PreSign',)
     temp_credentials = assumed_role_object['Credentials']
     session = boto3.session.Session(aws_access_key_id=temp_credentials['AccessKeyId'],
                                     aws_secret_access_key=temp_credentials['SecretAccessKey'],

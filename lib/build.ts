@@ -132,7 +132,7 @@ export class LambdaWithLayer extends Stack {
         APPNAME: process.env.ApplicationName!,
         ENVNAME: process.env.Environment!,
         APIURL: `https://${apigw.restApiId}.execute-api.${this.region}.amazonaws.com/prod`,
-        BUCKET: s3Bucket.arn
+        
       },
       }); 
      
@@ -148,7 +148,8 @@ export class LambdaWithLayer extends Stack {
         APPNAME: process.env.ApplicationName!,
         ENVNAME: process.env.Environment!,
         APIURL: `https://${apigw.restApiId}.execute-api.${this.region}.amazonaws.com/`,
-        S3ROLE: s3PreSignRole.bucketName
+        S3ROLE: s3PreSignRole.roleArn
+        BUCKET: s3Bucket.bucketName
       },
       }); 
 

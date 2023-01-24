@@ -88,7 +88,7 @@ export class LambdaWithLayer extends Stack {
 
     //IAM PreSign Assume Role
     const s3PreSignRole = new iam.Role(this, 's3PreSignRole', {
-      assumedBy: new iam.Principal(LambdaExecRole.roleArn),
+      assumedBy: new iam.ArnPrincipal(LambdaExecRole.roleArn),
       description: 'Lambda Execution Role',
       inlinePolicies: { s3rwRolePolicies }
     });

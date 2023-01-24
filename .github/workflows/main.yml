@@ -36,8 +36,8 @@ jobs:
       - name: Check running versions
         run: echo "node:$(node --version), cdk:$(cdk --version), typescript:$(tsc --version)"
       - name: Create temp directories
-        run: mkdir build && cd build
+        run: mkdir build
       - name: cdk init
-        run: cdk init --language=typescript && rm -rf bin lib && cp -r ../bin .;cp -r ../lib .;cp -r ../src .
+        run: cd build && cdk init --language=typescript && rm -rf bin lib && cp -r ../bin .;cp -r ../lib .;cp -r ../src .
       - name: cdk synth
         run: cdk synth

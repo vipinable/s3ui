@@ -53,24 +53,6 @@ export class LambdaWithLayer extends Stack {
     s3Bucket.grantRead(new iam.AccountRootPrincipal());
     s3Bucket.grantPut(new iam.AccountRootPrincipal());
 
-    //IAM policy document for cloudwatch permissions.
-    const LogsWritePolicy = new iam.PolicyDocument({
-      statements: [new iam.PolicyStatement({
-        actions: [
-          'logs:CreateLogGroup',
-          'logs:CreateLogStream',
-          'logs:PutLogEvents',
-        ],
-        resources: ['*'],
-      }),
-      new iam.PolicyStatement({
-        actions: [
-          'sts:AssumeRole',
-        ],
-        resources: [s3PreSignRole.roleArn],
-      })],
-    });
-
 
     //IAM Lambda Execution custom role 
     const LambdaExecRole = new iam.Role(this, 'LambdaExecRole', {
@@ -79,6 +61,15 @@ export class LambdaWithLayer extends Stack {
       inlinePolicies: { LogsWritePolicy }
     });
 
+    LambdaExecRole.addToPolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      resources: ['*'],
+      actions: [
+          'logs:CreateLogGroup',
+          'logs:CreateLogStream',
+          'logs:PutLogEvents',
+      ],
+    }));
 
     //IAM policy document for s3 Read write role.
     const s3rwRolePolicies = new iam.PolicyDocument({
@@ -98,6 +89,14 @@ export class LambdaWithLayer extends Stack {
       description: 'Lambda Execution Role',
       inlinePolicies: { s3rwRolePolicies }
     });
+
+    LambdaExecRole.addToPolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      resources: [s3PreSignRole.roleArn],
+      actions: [
+          'sts:AssumeRole',
+      ],
+    }));
       
   /*
     //API gateway authorizer function

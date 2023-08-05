@@ -33,7 +33,7 @@ jobs:
       - name: update npm package
         run: npm install -g npm@9.3.1
       - name: install aws cdk package
-        run: npm install -g aws-cdk && cdk --version && ls -l
+        run: npm install -g aws-cdk && cdk --version && echo $ENVNAME
       - name: Check running versions
         run: echo "node:$(node --version), cdk:$(cdk --version), typescript:$(tsc --version)"
       - name: Create temp directories

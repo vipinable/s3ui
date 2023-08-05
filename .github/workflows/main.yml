@@ -37,7 +37,7 @@ jobs:
       - name: Check running versions
         run: echo "node:$(node --version), cdk:$(cdk --version), typescript:$(tsc --version)"
       - name: Create temp directories
-        run: mkdir build && export StackName=$(git remote get-url origin | xargs basename -s .git)-$(git branch --show-current)
+        run: mkdir build && export StackName=$(basename $(pwd))-$(git branch --show-current) && echo $StackName
       - name: cdk init
         run: cd build && cdk init --language=typescript && rm -rf bin lib && cp -r ../bin .;cp -r ../lib .;cp -r ../src .
       - name: cdk synth

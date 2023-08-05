@@ -33,7 +33,7 @@ export class LambdaWithLayer extends Stack {
     */    
 
     //Lambda layer creation definition
-    const layer0 = new lambda.LayerVersion(this, 'LayerVersion', {
+    const layer0 = new lambda.LayerVersion(this, `${id}layer0`, {
       compatibleRuntimes: [
         lambda.Runtime.PYTHON_3_6,
         lambda.Runtime.PYTHON_3_7,
@@ -42,7 +42,7 @@ export class LambdaWithLayer extends Stack {
       code: lambda.Code.fromAsset(path.join(__dirname,'../../layer/bin')),
       });
 
-    const s3Bucket = new s3.Bucket(this, 's3uplodBucket', {
+    const s3Bucket = new s3.Bucket(this, `${id}s3Bucket`, {
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
@@ -55,7 +55,7 @@ export class LambdaWithLayer extends Stack {
 
 
     //IAM Lambda Execution custom role 
-    const LambdaExecRole = new iam.Role(this, 'LambdaExecRole', {
+    const LambdaExecRole = new iam.Role(this, `${id}LambdaExecRole`, {
       assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
       description: 'Lambda Execution Role',
     });
@@ -71,7 +71,7 @@ export class LambdaWithLayer extends Stack {
     }));
 
     //IAM PreSign Assume Role
-    const s3PreSignRole = new iam.Role(this, 's3PreSignRole', {
+    const s3PreSignRole = new iam.Role(this, `${id}s3PreSignRole`, {
       assumedBy: new iam.ArnPrincipal(LambdaExecRole.roleArn),
       description: 'Lambda Execution Role',
     });
@@ -111,7 +111,7 @@ export class LambdaWithLayer extends Stack {
 
     */
 
-    const apigw = new apigateway.RestApi(this, 'apigw', {
+    const apigw = new apigateway.RestApi(this, `${id}apigw`, {
     /* endpointTypes: [apigateway.EndpointType.PRIVATE]
       defaultMethodOptions: {
         authorizationType: apigateway.AuthorizationType.CUSTOM,
@@ -121,7 +121,7 @@ export class LambdaWithLayer extends Stack {
     }); 
 
     //Main function definition
-    const fn = new lambda.Function(this, 'Function', {
+    const mainfn = new lambda.Function(this, `${id}mainfn`, {
       description: 'S3SUI test function',
       runtime: lambda.Runtime.PYTHON_3_8,
       handler: 'main.handler',
@@ -137,7 +137,7 @@ export class LambdaWithLayer extends Stack {
       }); 
      
     //API gateway integration function
-    const apigwbe = new lambda.Function(this, 'apigwbe', {
+    const apigwbe = new lambda.Function(this, `${id}apigwbe`, {
       description: 'S3UI apigw backend function',
       runtime: lambda.Runtime.PYTHON_3_8,
       handler: 'main.handler',
@@ -203,13 +203,13 @@ export class LambdaWithLayer extends Stack {
 
 
     //API gateway assume role 
-    const ApiGwS3Upload = new iam.Role(this, 'ApiGwS3Upload', {
+    const ApiGwS3Upload = new iam.Role(this, `${id}ApiGwS3Upload`, {
       assumedBy: new iam.ServicePrincipal('apigateway.amazonaws.com'),
       description: 'API gateway s3 file upload Role',
       inlinePolicies: { ApiGwS3UploadPolicy }
     });
 
-    const apigws3endpoint = new apigateway.RestApi(this, 'apigws3endpoint', {
+    const apigws3endpoint = new apigateway.RestApi(this, `${id}apigws3endpoint`, {
       }); 
 
     const apigws3integration = new apigateway.AwsIntegration({

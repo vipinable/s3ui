@@ -33,11 +33,11 @@ jobs:
       - name: update npm package
         run: npm install -g npm@9.3.1
       - name: install aws cdk package
-        run: npm install -g aws-cdk && cdk --version
+        run: npm install -g aws-cdk && cdk --version && cat packages.json
       - name: Check running versions
         run: echo "node:$(node --version), cdk:$(cdk --version), typescript:$(tsc --version)"
       - name: Create temp directories
-        run: mkdir build
+        run: mkdir build && export StackName=$(git remote get-url origin | xargs basename -s .git)-$(git branch --show-current)
       - name: cdk init
         run: cd build && cdk init --language=typescript && rm -rf bin lib && cp -r ../bin .;cp -r ../lib .;cp -r ../src .
       - name: cdk synth
